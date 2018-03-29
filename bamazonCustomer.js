@@ -88,16 +88,16 @@ function goAgain() {
         type: "list",
         message: "Would you like to purchase something else?",
         choices: [
-          "Yes",
-          "No",
+            "Yes",
+            "No",
         ]
-      })
-      .then(function(answer) {
-          if (answer.action === "Yes"){
-              runSearch()
-          }
-          else{
-             connection.end();
-          }
-      })
+    })
+        .then(function (answer) {
+            if (answer.action === "Yes") {
+                runSearch()
+            }
+            else {
+                connection.end();
+            }
+        })
 }
