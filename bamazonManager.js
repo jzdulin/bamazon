@@ -75,3 +75,61 @@ function lowInventory() {
         // runSearch();
     });
 }
+
+function addInventory() {
+
+}
+
+function addProduct() {
+    inquirer.prompt([
+      {
+        name: "item",
+        type: "input",
+        message: "What is the item you would like to submit?"
+      },
+      {
+        name: "department",
+        type: "input",
+        message: "What category would you like to place your auction in?"
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "What would you like the price to be?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      },
+      {
+        name: "stock",
+        type: "input",
+        message: "How many would you like to have in stock?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      }
+    ])
+    .then(function(answer) {
+      
+      connection.query(
+        "INSERT INTO products SET ?",
+        {
+          product_name: answer.item,
+          department_name: answer.department,
+          price: answer.price,
+          stock_quantity: answer.stock
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Your product has been successfully added!");
+        //   start();
+        }
+      );
+    });
+}
