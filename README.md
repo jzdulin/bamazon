@@ -17,6 +17,7 @@ Add to Inventory allows for the user to add stock to any of the items.
 Add New Product allows the user to put a new product into the store and lets them set the department, price, and initial stock.
 Whenever a command completes it will ask the user if they would like to do anything else. If the user hits yes it will give them all the options again and if they hit no it will end the connection.
 
+A sample of using bamazonManager:
 
 ![Alt text](/bamazonManager.png?raw=true "Bamazon Manager Screenshot")
 
