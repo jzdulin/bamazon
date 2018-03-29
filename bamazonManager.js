@@ -17,8 +17,7 @@ connection.connect(function (err) {
 });
 
 function search() {
-    inquirer
-      .prompt({
+    inquirer.prompt({
         name: "action",
         type: "list",
         message: "What would you like to do?",
@@ -57,8 +56,7 @@ function productSearch() {
         for (var i = 0; i < res.length; i++) {
             console.log("ID: " + res[i].id + " || Product: " + res[i].product_name + " || Price: $" + res[i].price + "|| Quantity: " + res[i].stock_quantity);
         }
-        // connection.end();
-        // runSearch();
+        goAgain();
     });
 }
 
@@ -71,13 +69,57 @@ function lowInventory() {
                 console.log("ID: " + res[i].id + " || Product: " + res[i].product_name + " || Price: $" + res[i].price + "|| Quantity: " + res[i].stock_quantity);
             }    
         }
-        // connection.end();
-        // runSearch();
+        goAgain();
+
     });
 }
 
 function addInventory() {
+    productSearch();
+    connection.query("SELECT * FROM products", function (err, results) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                name: "choice",
+                type: "input",
+                message: "What is the ID number for the item you would like to add more of?"
+            },
+            {
+                name: "amount",
+                type: "input",
+                message: "How many would you like to add?"
+            }
+        ])
+            .then(function (answer) {
+                var chosenItem;
+                for (var i = 0; i < results.length; i++) {
+                    if (results[i].id === parseInt(answer.choice)) {
+                        chosenItem = results[i];
+                    }
+                }
+                if (chosenItem === undefined) {
+                    runSearch();
+                    return console.log("------------------------\nPlease select a valid ID\n------------------------")
+                }
 
+                    connection.query(
+                        "UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                                stock_quantity: (+chosenItem.stock_quantity + +answer.amount)
+                            },
+                            {
+                                id: chosenItem.id
+                            }
+                        ],
+                        function (error) {
+                            if (error) throw err;
+                            console.log("Stock successfully updated!");
+                            goAgain();
+                        }
+                    );
+                })
+    });
 }
 
 function addProduct() {
@@ -90,7 +132,7 @@ function addProduct() {
       {
         name: "department",
         type: "input",
-        message: "What category would you like to place your auction in?"
+        message: "Which department does your item belong in?"
       },
       {
         name: "price",
@@ -128,8 +170,29 @@ function addProduct() {
         function(err) {
           if (err) throw err;
           console.log("Your product has been successfully added!");
+          goAgain();
         //   start();
         }
       );
     });
+}
+
+function goAgain() {
+    inquirer.prompt({
+        name: "action",
+        type: "list",
+        message: "Would you like to do something else?",
+        choices: [
+          "Yes",
+          "No",
+        ]
+      })
+      .then(function(answer) {
+          if (answer.action === "Yes"){
+              search()
+          }
+          else{
+             connection.end();
+          }
+      })
 }

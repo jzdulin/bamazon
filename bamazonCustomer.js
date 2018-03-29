@@ -23,37 +23,15 @@ function start() {
         for (var i = 0; i < res.length; i++) {
             console.log("ID: " + res[i].id + " || Product: " + res[i].product_name + " || Price: $" + res[i].price);
         }
-        // connection.end();
         runSearch();
     });
 }
-
-// var itemArray = [];
-// var listOfItems = function () {
-//     connection.query('SELECT * FROM products' ,function(err, res) {
-//         for (var i = 0; i < res.length; i++) {
-//             itemArray.push(res[i].product_name);
-//         }
-//     })
-// };
-// listOfItems ();
-// console.log(itemArray);
 
 function runSearch() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
         inquirer.prompt([
             {
-                //   name: "choice",
-                //   type: "rawlist",
-                //   choices: itemArray,
-                //   function() {
-                //     var choiceArray = [];
-                //     for (var i = 0; i < results.length; i++) {
-                //       choiceArray.push(results[i].id);
-                //     }
-                //     return choiceArray;
-                //   },
                 name: "choice",
                 type: "input",
                 message: "What is the ID number for the item you would like to purchase?"
@@ -92,6 +70,7 @@ function runSearch() {
                             console.log("Order placed successfully!");
                             total = answer.amount * chosenItem.price;
                             console.log("Your total is $" + total + " !");
+                            goAgain();
                         }
                     );
                 }
@@ -103,4 +82,22 @@ function runSearch() {
     });
 }
 
-
+function goAgain() {
+    inquirer.prompt({
+        name: "action",
+        type: "list",
+        message: "Would you like to purchase something else?",
+        choices: [
+          "Yes",
+          "No",
+        ]
+      })
+      .then(function(answer) {
+          if (answer.action === "Yes"){
+              runSearch()
+          }
+          else{
+             connection.end();
+          }
+      })
+}
