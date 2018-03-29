@@ -70,12 +70,11 @@ function runSearch() {
                     if (results[i].id === parseInt(answer.choice)) {
                         chosenItem = results[i];
                     }
-                    else if (chosenItem === undefined) {
-                        runSearch();
-                        return console.log("------------------------\nPlease select a valid ID\n------------------------")
-                    }
                 }
-                console.log(chosenItem.stock_quantity);
+                if (chosenItem === undefined) {
+                    runSearch();
+                    return console.log("------------------------\nPlease select a valid ID\n------------------------")
+                }
 
                 if (chosenItem.stock_quantity > parseInt(answer.amount)) {
                     connection.query(
@@ -91,7 +90,8 @@ function runSearch() {
                         function (error) {
                             if (error) throw err;
                             console.log("Order placed successfully!");
-                            start();
+                            total = answer.amount * chosenItem.price;
+                            console.log("Your total is $" + total + " !");
                         }
                     );
                 }
